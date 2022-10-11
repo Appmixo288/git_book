@@ -3,7 +3,7 @@ const server = new Koa();
 const PORT = process.env.PORT || 80
 
 server.use(function* () {
-    this.body = '<div style="text-align:center"><br/><br/><h2>Welocme to AppMixo®<h2/>';
+    this.body = '<div style="text-align:center"><br/><br/><h2>Welcome to Kristagram Admin<h2/>';
 });
 
 server.listen(PORT, function () {
