@@ -17,11 +17,11 @@ function InitializingPassport(passport) {
       {
         clientID: process.env.GOOGLE_LOGIN_CLIENT_ID,
         clientSecret: process.env.GOOGLE_LOGIN_CLIENT_SECRET,
-        callbackURL: "/api/auth/callback",
+        callbackURL: process.env.HOST+"/api/auth/callback",
         
       },
       function (accessToken, refreshToken, profile, done) {
-        console.log('&*&*',process.env.EMAILS.includes(profile._json.email))
+        //console.log('&*&*',process.env.WEB_ADMIN_EMAILS.includes(profile._json.email))
    
         if(process.env.WEB_ADMIN_EMAILS.includes(profile._json.email))
        { 
