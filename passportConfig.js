@@ -23,7 +23,7 @@ function InitializingPassport(passport) {
       function (accessToken, refreshToken, profile, done) {
         console.log('&*&*',process.env.EMAILS.includes(profile._json.email))
    
-        if(process.env.EMAILS.includes(profile._json.email))
+        if(process.env.WEB_ADMIN_EMAILS.includes(profile._json.email))
        { 
         console.log("**", profile._json);
           User.findOne({ googleId: profile.id }).then((existingUser) => {
