@@ -15,8 +15,8 @@ function InitializingPassport(passport) {
   passport.use(
     new GoogleStrategy(
       {
-        clientID: process.env.CLIENT_ID,
-        clientSecret: process.env.CLIENT_SECRET,
+        clientID: process.env.GOOGLE_LOGIN_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_LOGIN_CLIENT_SECRET,
         callbackURL: "/api/auth/callback",
         
       },
