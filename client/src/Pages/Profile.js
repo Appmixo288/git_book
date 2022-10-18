@@ -16,7 +16,7 @@ const Profile = () => {
   const getAllUsers = async () => {
     console.log("call api dtaa");
     let responce = await getUserApi();
-    console.log("fuytfty", responce.data);
+    // console.log("fuytfty", responce.data);
     setarr(responce.data.user);
   };
 
