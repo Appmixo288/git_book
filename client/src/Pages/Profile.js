@@ -21,42 +21,78 @@ const Profile = () => {
   };
 
   const columns = [
-    { field: "phone", headerName: "phone" ,width:'100px',minWidth: 80, flex: 1, editable: true },
- 
-  { field: "createdAt", headerName: "createdAt" ,width:'100px',minWidth: 80, flex: 1, editable: true },
-  { field: "status", headerName: "status",width:'100px',minWidth: 80, flex: 1, editable: true},
-  { field: "type_of_user", headerName: "type_of_user",width:'100px',minWidth: 80, flex: 1, editable: true },
-  { field: "updatedAt", headerName: "updatedAt",width:'100px',minWidth: 80, flex: 1, editable: true },
-  { field: "brand_createdAt", headerName: "brand createdAt", width: 90 },
-  { field: "brand_type_of_brand", headerName: "brand type_of_brand", width: 90 },
-  { field: "brand_user_id", headerName: "brand user_id", width: 90 },
-  { field: "brand_updatedAt", headerName: "brand updatedAt", width: 90 },
-];
+    {
+      field: "id",
+      headerName: "id",
+      width: "100px",
+      minWidth: 80,
+      flex: 1,
+    },
+    {
+      field: "phone",
+      headerName: "phone",
+      width: "100px",
+      minWidth: 80,
+      flex: 1,
+    },
+
+    {
+      field: "createdAt",
+      headerName: "createdAt",
+      width: "100px",
+      minWidth: 80,
+      flex: 1,
+    },
+    {
+      field: "status",
+      headerName: "status",
+      width: "100px",
+      minWidth: 80,
+      flex: 1,
+    },
+    {
+      field: "type_of_user",
+      headerName: "type_of_user",
+      width: "100px",
+      minWidth: 80,
+      flex: 1,
+    },
+    {
+      field: "updatedAt",
+      headerName: "updatedAt",
+      width: "100px",
+      minWidth: 80,
+      flex: 1,
+    },
+    { field: "brand_createdAt", headerName: "brand createdAt", width: 90 },
+    {
+      field: "brand_type_of_brand",
+      headerName: "brand type_of_brand",
+      width: 90,
+    },
+    { field: "brand_user_id", headerName: "brand user_id", width: 90 },
+    { field: "brand_updatedAt", headerName: "brand updatedAt", width: 90 },
+  ];
   const rows = [];
-
-console.log('array',arr);
-  arr.map((item, i) =>
-
- { 
-  // console.log('^^^^^^^^^^^^',item.brands.type_of_brand);
-  return rows.push({
-     
-      id:item?._id,
+const i=0;
+  console.log("array", arr);
+  arr.map((item, i) => {
+    return rows.push({
+      id: i++,
       phone: item?.phone,
-      createdAt:item?.createdAt,
-      status:item?.status,
-      type_of_user:item?.type_of_user,
-      updatedAt :item?.updatedAt,
-
-      brand_createdAt:item?.brands?.createdAt,
-      brand_type_of_brand:item?.brands?.type_of_brand,
-      brand_user_id:item?.brands?.user_id,
-      brand_updatedAt:item?.brands?.updatedAt
-    })}
-  );
+      createdAt: item?.createdAt,
+      status: item?.status,
+      type_of_user: item?.type_of_user,
+      updatedAt: item?.updatedAt,
+      brand_createdAt: item?.brands?.createdAt,
+      brand_type_of_brand: item?.brands?.type_of_brand,
+      brand_user_id: item?.brands?.user_id,
+      brand_updatedAt: item?.brands?.updatedAt,
+    });
+  });
 
   return (
-    <div style={{  padding: "10px", textAlign: "center" }}>
+    <div style={{ padding: "10px", textAlign: "center" }}>
       <PersistentDrawer />
       {/* <Tabs>
             <TabList>
@@ -110,13 +146,12 @@ console.log('array',arr);
             </TabPanel>
           </Tabs> */}
 
-      <Box sx={{ height: 700, width: "100%", }}>
+      <Box sx={{ height: 630, width: "100%" }}>
         <DataGrid
           rows={rows}
           columns={columns}
           pageSize={10}
           rowsPerPageOptions={[10]}
-          checkboxSelection
           disableSelectionOnClick
           experimentalFeatures={{ newEditingApi: true }}
         />

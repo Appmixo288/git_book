@@ -12,8 +12,8 @@ const DashBoard = () => {
  
   return (
     <>
-      <PersistentDrawer>
-      <Outlet/>
+      <PersistentDrawer children={<Outlet/>}>
+      
       </PersistentDrawer>
     </>
   );
