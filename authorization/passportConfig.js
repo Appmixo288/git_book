@@ -1,4 +1,4 @@
-import User from "./model/user.js";
+import User from "../model/user.js";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 
 function InitializingPassport(passport) {
@@ -17,15 +17,11 @@ function InitializingPassport(passport) {
       {
         clientID: process.env.GOOGLE_LOGIN_CLIENT_ID,
         clientSecret: process.env.GOOGLE_LOGIN_CLIENT_SECRET,
-        callbackURL: process.env.HOST+"/api/auth/callback",
-        
+        callbackURL: process.env.HOST + "/api/auth/callback",
       },
       function (accessToken, refreshToken, profile, done) {
-        //console.log('&*&*',process.env.WEB_ADMIN_EMAILS.includes(profile._json.email))
-   
-        if(process.env.WEB_ADMIN_EMAILS.includes(profile._json.email))
-       { 
-        console.log("**", profile._json);
+        if (process.env.WEB_ADMIN_EMAILS.includes(profile._json.email)) {
+          console.log("**", profile._json);
           User.findOne({ googleId: profile.id }).then((existingUser) => {
             if (existingUser) {
               done(null, existingUser);
@@ -41,12 +37,10 @@ function InitializingPassport(passport) {
                 });
             }
           });
-      }
-      else{
-        console.log('Only specific Admin can login');
-       
-      }
-
+        } else {
+          console.log("Only specific Admin can login...");
+          done(null, null);
+        }
       }
     )
   );
