@@ -21,7 +21,7 @@ const Login = () => {
           } else {
             window.open(window.location.origin + "/auth/google", "_self");
           }
-          navigate("/dashBoard");
+          // navigate("/dashBoard");
         }}
       >
         Sign in with Google
