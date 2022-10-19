@@ -1,11 +1,8 @@
 import React from "react";
 import Button from "@mui/material/Button";
 import GoogleIcon from "@mui/icons-material/Google";
-import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const navigate = useNavigate();
-
   return (
     <div style={{ margin: "10%", padding: "20px", textAlign: "center" }}>
       <h1>Welcome to Kristgarm Admin</h1>
@@ -21,7 +18,6 @@ const Login = () => {
           } else {
             window.open(window.location.origin + "/auth/google", "_self");
           }
-          // navigate("/dashBoard");
         }}
       >
         Sign in with Google

@@ -6,6 +6,7 @@ import DashBoard from "./Pages/DashBoard";
 import Profile from "./Pages/Profile";
 import AdminData from "./Pages/AdminData";
 import PersistentDrawer from "./components/persistentDrawer";
+import Etc from "./Pages/etc";
 const Router = () => {
   const [cookieValue, setCookieValue] = useState("");
 
@@ -32,6 +33,7 @@ const Router = () => {
           <Route path="/" element={<Login />} />
           <Route path="/dashBoard" element={<DashBoard />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/etc" element={<Etc />} />
           <Route path="/adminData" element={<AdminData />} />
           <Route path="*" element={<h1>error page</h1>} />
         </Routes>

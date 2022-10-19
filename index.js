@@ -9,6 +9,8 @@ import initializingPassport from "./authorization/passportConfig.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import cookieParser from "cookie-parser";
+import router from "./routers/userRouter.js"
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -39,6 +41,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use("/api/v1",router)
 app.get(
   "/auth/google",
   passport.authenticate(
@@ -56,7 +59,6 @@ app.get("/api/auth/callback", (req, res) => {
   passport.authenticate("google", function (err, user, info) {
     console.log("hi2", user);
     console.log("hi3", info);
-
     if (err) {
       console.log("hi1", err);
     }
@@ -68,27 +70,12 @@ app.get("/api/auth/callback", (req, res) => {
       res.redirect("/dashBoard");
       return res;
     }
-
-    // req / res held in closure
-    // req.logIn(user, function (err) {
-    //   if (err) {
-    //     console.log("hi1", err);
-    //   }
-    //   return res.redirect("/dashBoard");
-    // });
   })(req, res);
   (req, res) => {
     console.log("res", res);
     res.redirect("/fail");
   };
 });
-
-// app.get("/current_user", (req, res) => {
-//   res.cookie("userData", "abc");
-//   res.redirect("/dashboard");
-//   // console.log('*********',req.user)
-//   // res.send(req.user);
-// });
 
 app.get("/api/logout", (req, res) => {
   req.logout(() => {});

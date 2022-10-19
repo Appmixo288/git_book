@@ -1,23 +1,84 @@
 import React, { useEffect, useState } from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import PersistentDrawer from "../components/persistentDrawer";
-import { getUserApi } from "../API/api";
-
+import {
+  getBrandApproveApi,
+  getBrandPendingApi,
+  getBrandSuspendApi,
+  getBrandAllApi,
+} from "../API/api";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 
 const Profile = () => {
   const [arr, setarr] = useState([]);
+  const [pageState, setPageState] = useState({
+    isLoading: false,
+    total: 0,
+    page: 1,
+    pageSize: 10,
+  });
 
   useEffect(() => {
-    getAllUsers();
-  }, []);
+    getBrandApproveData();
+  }, [pageState.page, pageState.pageSize]);
 
-  const getAllUsers = async () => {
-    console.log("call api dtaa");
-    let responce = await getUserApi();
-    // console.log("fuytfty", responce.data);
-    setarr(responce.data.user);
+  const getBrandApproveData = async () => {
+    console.log("getBrandApproveData");
+    setPageState((old) => ({ ...old, isLoading: true }));
+    const response = await getBrandApproveApi();
+    setarr(response.data.user);
+
+    setPageState((old) => ({
+      ...old,
+      total: response.data.total_records,
+      isLoading: false,
+      data: response.data,
+    }));
+  };
+
+  const getBrandPendingData = async () => {
+    console.log("getBrandPendingData");
+    setPageState((old) => ({ ...old, isLoading: true }));
+    const response = await getBrandPendingApi();
+    setarr(response.data.user);
+
+    setPageState((old) => ({
+      ...old,
+      total: response.data.total_records,
+      isLoading: false,
+      data: response.data,
+    }));
+  };
+
+  const getBrandSuspendData = async () => {
+    console.log("getBrandSuspendData");
+    setPageState((old) => ({ ...old, isLoading: true }));
+    const response = await getBrandSuspendApi();
+
+    setarr(response.data.user);
+
+    setPageState((old) => ({
+      ...old,
+      total: response.data.total_records,
+      isLoading: false,
+      data: response.data,
+    }));
+  };
+
+  const getBrandAllData = async () => {
+    console.log("getBrandAllData");
+    setPageState((old) => ({ ...old, isLoading: true }));
+    const response = await getBrandAllApi();
+
+    setarr(response.data.user);
+
+    setPageState((old) => ({
+      ...old,
+      total: response.data.total_records,
+      isLoading: false,
+      data: response.data,
+    }));
   };
 
   const columns = [
@@ -74,11 +135,10 @@ const Profile = () => {
     { field: "brand_updatedAt", headerName: "brand updatedAt", width: 90 },
   ];
   const rows = [];
-const i=0;
-  console.log("array", arr);
+
   arr.map((item, i) => {
     return rows.push({
-      id: i++,
+      id: i + 1,
       phone: item?.phone,
       createdAt: item?.createdAt,
       status: item?.status,
@@ -91,71 +151,103 @@ const i=0;
     });
   });
 
-  return (
-    <div style={{ padding: "10px", textAlign: "center" }}>
-      <PersistentDrawer />
-      {/* <Tabs>
-            <TabList>
-              <Tab >Brand</Tab>
-              <Tab>Influencer</Tab>
-            </TabList>
-            <TabPanel>
-              <Tabs>
-                <TabList>
-                  <Tab>Approve</Tab>
-                  <Tab>Pending</Tab>
-                  <Tab>Suspend</Tab>
-                  <Tab>All</Tab>
-                </TabList>
-                <TabPanel>
-                  <Tab>Approve</Tab>
-                </TabPanel>
-                <TabPanel>
-                  <Tab>Pending</Tab>
-                </TabPanel>
-                <TabPanel>
-                  <Tab>Suspend</Tab>
-                </TabPanel>
-                <TabPanel>
-              
-                <Tab>All</Tab>
-                </TabPanel>
-              </Tabs>
-            </TabPanel>
-            <TabPanel>
-              <Tabs>
-                <TabList>
-                  <Tab>Approve</Tab>
-                  <Tab>Pending</Tab>
-                  <Tab>Suspend</Tab>
-                  <Tab>All</Tab>
-                </TabList>
-                <TabPanel>
-                  <Tab>Approve</Tab>
-                </TabPanel>
-                <TabPanel>
-                  <Tab>Pending</Tab>
-                </TabPanel>
-                <TabPanel>
-                  <Tab>Suspend</Tab>
-                </TabPanel>
-                <TabPanel>
-                  <Tab>All</Tab>
-                </TabPanel>
-              </Tabs>
-            </TabPanel>
-          </Tabs> */}
-
+  const data =
+    arr.length == 0 ? (
+      <div>
+        <h1 style={{ textAlign: "center" }}>No Data Found</h1>
+      </div>
+    ) : (
       <Box sx={{ height: 630, width: "100%" }}>
         <DataGrid
           rows={rows}
           columns={columns}
-          pageSize={10}
+          rowCount={pageState.total}
+          loading={pageState.isLoading}
           rowsPerPageOptions={[10]}
-          disableSelectionOnClick
-          experimentalFeatures={{ newEditingApi: true }}
+          pagination
+          page={pageState.page - 1}
+          pageSize={pageState.pageSize}
+          paginationMode="server"
+          onPageChange={(newPage) => {
+            setPageState((old) => ({ ...old, page: newPage + 1 }));
+          }}
+          onPageSizeChange={(newPageSize) =>
+            setPageState((old) => ({ ...old, pageSize: newPageSize }))
+          }
         />
       </Box>
+    );
+
+  return (
+    <div style={{ padding: "10px" }}>
+      <PersistentDrawer />
+      <Tabs>
+        <TabList>
+          <Tab>Brand</Tab>
+          <Tab>Influencer</Tab>
+        </TabList>
+        <TabPanel>
+          <Tabs>
+            <TabList>
+              <Tab
+                onClick={() => {
+                  getBrandApproveData();
+                }}
+              >
+                Approve
+              </Tab>
+              <Tab
+                onClick={() => {
+                  getBrandPendingData();
+                }}
+              >
+                Pending
+              </Tab>
+
+              <Tab
+                onClick={() => {
+                  getBrandSuspendData();
+                }}
+              >
+                Suspend
+              </Tab>
+              <Tab
+                onClick={() => {
+                  getBrandAllData();
+                }}
+              >
+                All
+              </Tab>
+            </TabList>
+            <TabPanel>{data}</TabPanel>
+            <TabPanel>{data}</TabPanel>
+            <TabPanel>{data}</TabPanel>
+            <TabPanel>{data}</TabPanel>
+          </Tabs>
+        </TabPanel>
+        <TabPanel>
+          <Tabs>
+            <TabList>
+              <Tab>Approve</Tab>
+              <Tab>Pending</Tab>
+              <Tab>Suspend</Tab>
+              <Tab>All</Tab>
+            </TabList>
+            <TabPanel>
+              <Tab>Approve</Tab>
+            </TabPanel>
+            <TabPanel>
+              <Tab>Pending</Tab>
+            </TabPanel>
+            <TabPanel>
+              <Tab>Suspend</Tab>
+            </TabPanel>
+            <TabPanel>
+              <Tab>All</Tab>
+            </TabPanel>
+          </Tabs>
+        </TabPanel>
+      </Tabs>
     </div>
   );
 };
