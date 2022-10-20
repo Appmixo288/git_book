@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import PersistentDrawer from "../components/persistentDrawer";
-import {
-  getBrandApproveApi,
-  getBrandPendingApi,
-  getBrandSuspendApi,
-  getBrandAllApi,
-} from "../API/api";
+import { getBrandApi } from "../API/api";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 
@@ -18,43 +13,38 @@ const Profile = () => {
     page: 1,
     pageSize: 10,
   });
+  const [tabVal, setTabVal] = useState(0);
+  const [tabValIns, setTabValIns] = useState(0);
+  const [mainTabVal, setMainTabVal] = useState(0);
+  const [totalVal, setTotalVal] = useState(0);
 
   useEffect(() => {
-    getBrandApproveData();
+    if(mainTabVal==0)
+  {  tabVal == 0&& mainTabVal==0
+      ? getBrandAllData("brand", "approved")
+      : tabVal == 1
+      ? getBrandAllData("brand", "pending")
+      : tabVal == 2
+      ? getBrandAllData("brand", "suspend")
+      : getBrandAllData("brand");}
+      else if(mainTabVal==1) {  tabValIns == 0&& mainTabVal==1
+        ? getBrandAllData("influencer", "approved")
+        : tabValIns == 1
+        ? getBrandAllData("influencer", "pending")
+        : tabValIns == 2
+        ? getBrandAllData("influencer", "suspend")
+        : getBrandAllData("influencer");}
   }, [pageState.page, pageState.pageSize]);
 
-  const getBrandApproveData = async () => {
-    console.log("getBrandApproveData");
+  const getBrandAllData = async (brand, status) => {
+    console.log("getBrandAllData", pageState.pageSize, pageState.page);
     setPageState((old) => ({ ...old, isLoading: true }));
-    const response = await getBrandApproveApi();
-    setarr(response.data.user);
-
-    setPageState((old) => ({
-      ...old,
-      total: response.data.total_records,
-      isLoading: false,
-      data: response.data,
-    }));
-  };
-
-  const getBrandPendingData = async () => {
-    console.log("getBrandPendingData");
-    setPageState((old) => ({ ...old, isLoading: true }));
-    const response = await getBrandPendingApi();
-    setarr(response.data.user);
-
-    setPageState((old) => ({
-      ...old,
-      total: response.data.total_records,
-      isLoading: false,
-      data: response.data,
-    }));
-  };
-
-  const getBrandSuspendData = async () => {
-    console.log("getBrandSuspendData");
-    setPageState((old) => ({ ...old, isLoading: true }));
-    const response = await getBrandSuspendApi();
+    const response = await getBrandApi(
+      pageState.pageSize,
+      pageState.page,
+      brand,
+      status
+    );
 
     setarr(response.data.user);
 
@@ -62,23 +52,8 @@ const Profile = () => {
       ...old,
       total: response.data.total_records,
       isLoading: false,
-      data: response.data,
     }));
-  };
-
-  const getBrandAllData = async () => {
-    console.log("getBrandAllData");
-    setPageState((old) => ({ ...old, isLoading: true }));
-    const response = await getBrandAllApi();
-
-    setarr(response.data.user);
-
-    setPageState((old) => ({
-      ...old,
-      total: response.data.total_records,
-      isLoading: false,
-      data: response.data,
-    }));
+    setTotalVal(response.data.total_records);
   };
 
   const columns = [
@@ -183,40 +158,48 @@ const Profile = () => {
       <PersistentDrawer />
       <Tabs>
         <TabList>
-          <Tab>Brand</Tab>
-          <Tab>Influencer</Tab>
+          <Tab onClick={() => {
+            setMainTabVal(0)
+          }}>Brand</Tab>
+          <Tab onClick={() => {
+            setMainTabVal(1)
+          }}>Influencer</Tab>
         </TabList>
         <TabPanel>
           <Tabs>
             <TabList>
               <Tab
                 onClick={() => {
-                  getBrandApproveData();
+                  setTabVal(0);
+                  getBrandAllData("brand", "approved");
                 }}
               >
-                Approve
+                Approve : {totalVal}
               </Tab>
               <Tab
                 onClick={() => {
-                  getBrandPendingData();
+                  setTabVal(1);
+                  getBrandAllData("brand", "pending");
                 }}
               >
-                Pending
+                Pending : {totalVal}
               </Tab>
 
               <Tab
                 onClick={() => {
-                  getBrandSuspendData();
+                  setTabVal(2);
+                  getBrandAllData("brand", "suspend");
                 }}
               >
-                Suspend
+                Suspend : {totalVal}
               </Tab>
               <Tab
                 onClick={() => {
-                  getBrandAllData();
+                  setTabVal(3);
+                  getBrandAllData("brand");
                 }}
               >
-                All
+                All : {totalVal}
               </Tab>
             </TabList>
             <TabPanel>{data}</TabPanel>
@@ -228,23 +211,44 @@ const Profile = () => {
         <TabPanel>
           <Tabs>
             <TabList>
-              <Tab>Approve</Tab>
-              <Tab>Pending</Tab>
-              <Tab>Suspend</Tab>
-              <Tab>All</Tab>
+              <Tab
+                onClick={() => {
+                  setTabValIns(0);
+                  getBrandAllData("influencer", "approved");
+                }}
+              >
+                Approve : {totalVal}
+              </Tab>
+              <Tab
+                onClick={() => {
+                  setTabValIns(1);
+                  getBrandAllData("influencer", "pending");
+                }}
+              >
+                Pending : {totalVal}
+              </Tab>
+
+              <Tab
+                onClick={() => {
+                  setTabValIns(2);
+                  getBrandAllData("influencer", "suspend");
+                }}
+              >
+                Suspend : {totalVal}
+              </Tab>
+              <Tab
+                onClick={() => {
+                  setTabValIns(3);
+                  getBrandAllData("influencer");
+                }}
+              >
+                All : {totalVal}
+              </Tab>
             </TabList>
-            <TabPanel>
-              <Tab>Approve</Tab>
-            </TabPanel>
-            <TabPanel>
-              <Tab>Pending</Tab>
-            </TabPanel>
-            <TabPanel>
-              <Tab>Suspend</Tab>
-            </TabPanel>
-            <TabPanel>
-              <Tab>All</Tab>
-            </TabPanel>
+            <TabPanel>{data}</TabPanel>
+            <TabPanel>{data}</TabPanel>
+            <TabPanel>{data}</TabPanel>
+            <TabPanel>{data}</TabPanel>
           </Tabs>
         </TabPanel>
       </Tabs>

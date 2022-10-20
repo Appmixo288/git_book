@@ -5,7 +5,7 @@ import GoogleIcon from "@mui/icons-material/Google";
 const Login = () => {
   return (
     <div style={{ margin: "10%", padding: "20px", textAlign: "center" }}>
-      <h1>Welcome to Kristgarm Admin</h1>
+      <h1>Welcome to Kristagram Admin</h1>
       <br />
       <br />
 
