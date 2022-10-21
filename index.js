@@ -9,8 +9,7 @@ import initializingPassport from "./authorization/passportConfig.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import cookieParser from "cookie-parser";
-import router from "./routers/userRouter.js"
-
+import router from "./routers/userRouter.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -41,7 +40,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/api/v1",router)
+app.use("/api/v1", router);
 app.get(
   "/auth/google",
   passport.authenticate(
@@ -67,7 +66,7 @@ app.get("/api/auth/callback", (req, res) => {
     }
     if (user) {
       // res.cookie("userData", user.id);
-      res.redirect("/dashBoard");
+      res.redirect("/profile");
       return res;
     }
   })(req, res);

@@ -36,7 +36,7 @@ const Profile = () => {
         : tabVal == 1
         ? getBrandAllData("brand", "pending")
         : tabVal == 2
-        ? getBrandAllData("brand", "suspend")
+        ? getBrandAllData("brand", "suspended")
         : getBrandAllData("brand");
     } else if (mainTabVal == 1) {
       tabValIns == 0 && mainTabVal == 1
@@ -44,7 +44,7 @@ const Profile = () => {
         : tabValIns == 1
         ? getBrandAllData("influencer", "pending")
         : tabValIns == 2
-        ? getBrandAllData("influencer", "suspend")
+        ? getBrandAllData("influencer", "suspended")
         : getBrandAllData("influencer");
     }
   }, [pageState.page, pageState.pageSize]);
@@ -252,6 +252,7 @@ const Profile = () => {
         <TabList>
           <Tab
             onClick={() => {
+              countData()
               getBrandAllData("brand", "approved");
               setMainTabVal(0);
               tabVal == 0
@@ -267,6 +268,7 @@ const Profile = () => {
           </Tab>
           <Tab
             onClick={() => {
+              countData()
               getBrandAllData("influencer", "approved");
               setMainTabVal(1);
               tabValIns == 0
@@ -286,6 +288,7 @@ const Profile = () => {
             <TabList>
               <Tab
                 onClick={() => {
+                  countData()
                   setTabVal(0);
                   getBrandAllData("brand", "approved");
                 }}
@@ -294,6 +297,7 @@ const Profile = () => {
               </Tab>
               <Tab
                 onClick={() => {
+                  countData()
                   setTabVal(1);
                   getBrandAllData("brand", "pending");
                 }}
@@ -303,6 +307,7 @@ const Profile = () => {
 
               <Tab
                 onClick={() => {
+                  countData()
                   setTabVal(2);
                   getBrandAllData("brand", "suspended");
                 }}
@@ -311,6 +316,7 @@ const Profile = () => {
               </Tab>
               <Tab
                 onClick={() => {
+                  countData()
                   setTabVal(3);
                   getBrandAllData("brand");
                 }}
@@ -329,6 +335,7 @@ const Profile = () => {
             <TabList>
               <Tab
                 onClick={() => {
+                  countData()
                   setTabValIns(0);
                   getBrandAllData("influencer", "approved");
                 }}
@@ -337,6 +344,7 @@ const Profile = () => {
               </Tab>
               <Tab
                 onClick={() => {
+                  countData()
                   setTabValIns(1);
                   getBrandAllData("influencer", "pending");
                 }}
@@ -346,6 +354,7 @@ const Profile = () => {
 
               <Tab
                 onClick={() => {
+                  countData()
                   setTabValIns(2);
                   getBrandAllData("influencer", "suspended");
                 }}
@@ -354,6 +363,7 @@ const Profile = () => {
               </Tab>
               <Tab
                 onClick={() => {
+                  countData()
                   setTabValIns(3);
                   getBrandAllData("influencer");
                 }}
