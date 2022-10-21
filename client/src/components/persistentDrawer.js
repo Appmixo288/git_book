@@ -84,24 +84,24 @@ const PersistentDrawer = ({ children }) => {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
+  // const handleDrawerOpen = () => {
+  //   setOpen(true);
+  // };
 
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
+  // const handleDrawerClose = () => {
+  //   setOpen(false);
+  // };
   return (
     <div>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar
-          position="fixed"
-          open={open}
-          style={{ background: "#696969  " }}
+          position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      
+          style={{ background: "#273746" }}
         >
           <Toolbar>
-            <IconButton
+            {/* <IconButton
               color="inherit"
               aria-label="open drawer"
               onClick={handleDrawerOpen}
@@ -109,9 +109,9 @@ const PersistentDrawer = ({ children }) => {
               sx={{ mr: 2, ...(open && { display: "none" }) }}
             >
               <MenuIcon />
-            </IconButton>
+            </IconButton> */}
             <Typography variant="h6" noWrap component="div">
-              Welcome to Kristagram Admin
+             Kristagram 
             </Typography>
           </Toolbar>
         </AppBar>
@@ -123,12 +123,13 @@ const PersistentDrawer = ({ children }) => {
               width: drawerWidth,
               boxSizing: "border-box",
             },
+            
           }}
-          variant="persistent"
-          anchor="left"
-          open={open}
+          variant="permanent"
+          // anchor="left"
+          // open={open}
         >
-          <DrawerHeader>
+          {/* <DrawerHeader>
             <IconButton onClick={handleDrawerClose}>
               {theme.direction === "ltr" ? (
                 <ChevronLeftIcon />
@@ -136,9 +137,11 @@ const PersistentDrawer = ({ children }) => {
                 <ChevronRightIcon />
               )}
             </IconButton>
-          </DrawerHeader>
+          </DrawerHeader> */}
+          <Toolbar />
           <Divider />
-          <List>
+          <Box sx={{ overflow: 'auto' ,}}>
+          <List >
           <Link to="/profile" style={{textDecoration: "none",color:'black'}}>
 
             <ListItem button onClick={() => {console.log("profile");}}>
@@ -154,9 +157,10 @@ const PersistentDrawer = ({ children }) => {
             </Link>
             <Divider />
           </List>
+          </Box>
         </Drawer>
-      
-          <Main open={open} >
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}></Box>
+          <Main  >
           {/* <DrawerHeader /> */}
           {children}
           <Outlet/>

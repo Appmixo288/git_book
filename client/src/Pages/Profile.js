@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import PersistentDrawer from "../components/persistentDrawer";
-import { getBrandApi } from "../API/api";
+import { getBrandApi, getCountApi } from "../API/api";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 
@@ -16,24 +16,37 @@ const Profile = () => {
   const [tabVal, setTabVal] = useState(0);
   const [tabValIns, setTabValIns] = useState(0);
   const [mainTabVal, setMainTabVal] = useState(0);
-  const [totalVal, setTotalVal] = useState(0);
+
+  const [totalVal, setTotalVal] = useState({
+    allBrand: 0,
+    approvedBrand: 0,
+    suspendBrand: 0,
+    pendingBrand: 0,
+    allInfluencer: 0,
+    approvedInfluencer: 0,
+    suspendInfluencer: 0,
+    pendingInfluencer: 0,
+  });
 
   useEffect(() => {
-    if(mainTabVal==0)
-  {  tabVal == 0&& mainTabVal==0
-      ? getBrandAllData("brand", "approved")
-      : tabVal == 1
-      ? getBrandAllData("brand", "pending")
-      : tabVal == 2
-      ? getBrandAllData("brand", "suspend")
-      : getBrandAllData("brand");}
-      else if(mainTabVal==1) {  tabValIns == 0&& mainTabVal==1
+    countData();
+    if (mainTabVal == 0) {
+      tabVal == 0 && mainTabVal == 0
+        ? getBrandAllData("brand", "approved")
+        : tabVal == 1
+        ? getBrandAllData("brand", "pending")
+        : tabVal == 2
+        ? getBrandAllData("brand", "suspend")
+        : getBrandAllData("brand");
+    } else if (mainTabVal == 1) {
+      tabValIns == 0 && mainTabVal == 1
         ? getBrandAllData("influencer", "approved")
         : tabValIns == 1
         ? getBrandAllData("influencer", "pending")
         : tabValIns == 2
         ? getBrandAllData("influencer", "suspend")
-        : getBrandAllData("influencer");}
+        : getBrandAllData("influencer");
+    }
   }, [pageState.page, pageState.pageSize]);
 
   const getBrandAllData = async (brand, status) => {
@@ -53,62 +66,141 @@ const Profile = () => {
       total: response.data.total_records,
       isLoading: false,
     }));
-    setTotalVal(response.data.total_records);
   };
 
-  const columns = [
-    {
-      field: "id",
-      headerName: "id",
-      width: "100px",
-      minWidth: 80,
-      flex: 1,
-    },
-    {
-      field: "phone",
-      headerName: "phone",
-      width: "100px",
-      minWidth: 80,
-      flex: 1,
-    },
+  const countData = async () => {
+    const res = await getCountApi();
+    console.log("1232434", res.data);
+    setTotalVal({
+      allBrand: res.data.brandCount,
+      approvedBrand: res.data.brandApprovedCount,
+      suspendBrand: res.data.brandSuspendCount,
+      pendingBrand: res.data.brandPendingCount,
+      allInfluencer: res.data.infuencerCount,
+      approvedInfluencer: res.data.infuencerApprovedCount,
+      suspendInfluencer: res.data.infuencerSuspendCount,
+      pendingInfluencer: res.data.infuencerPendingCount,
+    });
+  };
 
-    {
-      field: "createdAt",
-      headerName: "createdAt",
-      width: "100px",
-      minWidth: 80,
-      flex: 1,
-    },
-    {
-      field: "status",
-      headerName: "status",
-      width: "100px",
-      minWidth: 80,
-      flex: 1,
-    },
-    {
-      field: "type_of_user",
-      headerName: "type_of_user",
-      width: "100px",
-      minWidth: 80,
-      flex: 1,
-    },
-    {
-      field: "updatedAt",
-      headerName: "updatedAt",
-      width: "100px",
-      minWidth: 80,
-      flex: 1,
-    },
-    { field: "brand_createdAt", headerName: "brand createdAt", width: 90 },
-    {
-      field: "brand_type_of_brand",
-      headerName: "brand type_of_brand",
-      width: 90,
-    },
-    { field: "brand_user_id", headerName: "brand user_id", width: 90 },
-    { field: "brand_updatedAt", headerName: "brand updatedAt", width: 90 },
-  ];
+  const columns =
+    arr[0]?.type_of_user == "brand"
+      ? [
+          // {
+          //   field: "id",
+          //   headerName: "id",
+          //   width: "100px",
+          //   minWidth: 80,
+          //   flex: 1,
+          // },
+          {
+            field: "phone",
+            headerName: "Phone",
+            minWidth: 130,
+            width: 130,
+            flex: 1,
+          },
+
+          {
+            field: "createdAt",
+            headerName: "CreatedAt",
+            width: 210,
+            flex: 1,
+            minWidth: 210,
+          },
+          // {
+          //   field: "status",
+          //   headerName: "status",
+          //   width: "100px",
+          //   minWidth: 80,
+          //   flex: 1,
+          // },
+          // {
+          //   field: "type_of_user",
+          //   headerName: "type_of_user",
+          //   width: "100px",
+          //   minWidth: 80,
+          //   flex: 1,
+          // },
+          {
+            field: "updatedAt",
+            headerName: "UpdatedAt",
+            minWidth: 210,
+            width: 210,
+            flex: 1,
+          },
+          // { field: "brand_createdAt", headerName: "brand createdAt", width: 90 },
+
+          {
+            field: "brand_type_of_brand",
+            headerName: "Type of brand",
+            minWidth: 150,
+            width: 150,
+            flex: 1,
+          },
+          {
+            field: "brand_user_id",
+            headerName: "User id",
+            minWidth: 200,
+            width: 200,
+            flex: 1,
+          },
+          // { field: "brand_updatedAt", headerName: "brand updatedAt", width: 90 },
+        ]
+      : [
+          {
+            field: "phone",
+            headerName: "Phone",
+            minWidth: 130,
+            width: 130,
+            flex: 1,
+          },
+
+          {
+            field: "createdAt",
+            headerName: "CreatedAt",
+            width: 210,
+            flex: 1,
+            minWidth: 210,
+          },
+          // {
+          //   field: "status",
+          //   headerName: "status",
+          //   width: "100px",
+          //   minWidth: 80,
+          //   flex: 1,
+          // },
+          // {
+          //   field: "type_of_user",
+          //   headerName: "type_of_user",
+          //   width: "100px",
+          //   minWidth: 80,
+          //   flex: 1,
+          // },
+          {
+            field: "updatedAt",
+            headerName: "UpdatedAt",
+            minWidth: 210,
+            width: 210,
+            flex: 1,
+          },
+          // { field: "brand_createdAt", headerName: "brand createdAt", width: 90 },
+
+          // {
+          //   field: "brand_type_of_brand",
+          //   headerName: "Type of brand",
+          //   minWidth: 150,
+          //   width: 150,
+          //   flex: 1,
+          // },
+          // {
+          //   field: "brand_user_id",
+          //   headerName: "User id",
+          //   minWidth: 200,
+          //   width: 200,
+          //   flex: 1,
+          // },
+        ];
   const rows = [];
 
   arr.map((item, i) => {
@@ -154,16 +246,40 @@ const Profile = () => {
     );
 
   return (
-    <div style={{ padding: "10px" }}>
+    <div style={{ padding: "10px", paddingLeft: "250px" }}>
       <PersistentDrawer />
       <Tabs>
         <TabList>
-          <Tab onClick={() => {
-            setMainTabVal(0)
-          }}>Brand</Tab>
-          <Tab onClick={() => {
-            setMainTabVal(1)
-          }}>Influencer</Tab>
+          <Tab
+            onClick={() => {
+              getBrandAllData("brand", "approved");
+              setMainTabVal(0);
+              tabVal == 0
+                ? getBrandAllData("brand", "approved")
+                : tabVal == 1
+                ? getBrandAllData("brand", "pending")
+                : tabVal == 2
+                ? getBrandAllData("brand", "suspended")
+                : getBrandAllData("brand");
+            }}
+          >
+            Brand
+          </Tab>
+          <Tab
+            onClick={() => {
+              getBrandAllData("influencer", "approved");
+              setMainTabVal(1);
+              tabValIns == 0
+                ? getBrandAllData("influencer", "approved")
+                : tabValIns == 1
+                ? getBrandAllData("influencer", "pending")
+                : tabValIns == 2
+                ? getBrandAllData("influencer", "suspended")
+                : getBrandAllData("influencer");
+            }}
+          >
+            Influencer
+          </Tab>
         </TabList>
         <TabPanel>
           <Tabs>
@@ -174,7 +290,7 @@ const Profile = () => {
                   getBrandAllData("brand", "approved");
                 }}
               >
-                Approve : {totalVal}
+                Approve : {totalVal.approvedBrand}
               </Tab>
               <Tab
                 onClick={() => {
@@ -182,16 +298,16 @@ const Profile = () => {
                   getBrandAllData("brand", "pending");
                 }}
               >
-                Pending : {totalVal}
+                Pending : {totalVal.pendingBrand}
               </Tab>
 
               <Tab
                 onClick={() => {
                   setTabVal(2);
-                  getBrandAllData("brand", "suspend");
+                  getBrandAllData("brand", "suspended");
                 }}
               >
-                Suspend : {totalVal}
+                Suspend :{totalVal.suspendBrand}
               </Tab>
               <Tab
                 onClick={() => {
@@ -199,7 +315,7 @@ const Profile = () => {
                   getBrandAllData("brand");
                 }}
               >
-                All : {totalVal}
+                All :{totalVal.allBrand}
               </Tab>
             </TabList>
             <TabPanel>{data}</TabPanel>
@@ -217,7 +333,7 @@ const Profile = () => {
                   getBrandAllData("influencer", "approved");
                 }}
               >
-                Approve : {totalVal}
+                Approve : {totalVal.approvedInfluencer}
               </Tab>
               <Tab
                 onClick={() => {
@@ -225,16 +341,16 @@ const Profile = () => {
                   getBrandAllData("influencer", "pending");
                 }}
               >
-                Pending : {totalVal}
+                Pending : {totalVal.pendingInfluencer}
               </Tab>
 
               <Tab
                 onClick={() => {
                   setTabValIns(2);
-                  getBrandAllData("influencer", "suspend");
+                  getBrandAllData("influencer", "suspended");
                 }}
               >
-                Suspend : {totalVal}
+                Suspend : {totalVal.suspendInfluencer}
               </Tab>
               <Tab
                 onClick={() => {
@@ -242,7 +358,7 @@ const Profile = () => {
                   getBrandAllData("influencer");
                 }}
               >
-                All : {totalVal}
+                All : {totalVal.allInfluencer}
               </Tab>
             </TabList>
             <TabPanel>{data}</TabPanel>

@@ -24,3 +24,13 @@ export const getBrandApi = async (
   }
 };
 
+export const getCountApi = async () => {
+  try {
+    console.log("getCountApi");
+    const res = await axios.get(`/api/v1/all?itemperpage=10`);
+    console.log("****", res.data);
+    return res;
+  } catch (error) {
+    console.log("error while calling get user api", error);
+  }
+};

@@ -1,10 +1,8 @@
+import mongoose from "mongoose";
 
-import mongoose from "mongoose"
+import adminUser from "../models/userModel.js";
 
-import adminUser from "../models/userModel.js"
-
-import errors from "../utils/errors.js"
-
+import errors from "../utils/errors.js";
 
 //@Router router.route("/verifyuser").put(VerifyUser);
 //verify user panding approved and reject
@@ -46,7 +44,6 @@ export const VerifyUser = async (req, res, next) => {
         success: true,
         user: users[0],
       });
-      
     } else {
       return res.status(400).json({
         success: false,
@@ -101,7 +98,6 @@ export const userAdmin = async (req, res, next) => {
 
 //@Router router.route("/savecost").post(isAuthentication,saveCost);
 // save cost userwise and if user status= approved then after 15 day update a cost,tag
-
 
 //time remaning
 function dhm(ms) {
@@ -382,8 +378,8 @@ export const getuserDetails = async (req, res, next) => {
 
     //pagination
     let currpage, itempage;
-   
-    const itemperpage =  req.query.itemperpage || process.env.PAGE_LIMIT;
+
+    const itemperpage = req.query.itemperpage || process.env.PAGE_LIMIT;
     const currentpageno = req.query.currentpageno || 1;
 
     const andQuery = [];
@@ -561,11 +557,11 @@ export const getuserDetails = async (req, res, next) => {
       {
         $limit: itempage,
       },
-      { 
-        $sort : { createdAt : -1 }
-       }
+      {
+        $sort: { createdAt: -1 },
+      },
     ];
-   
+
     //  console.log("query",JSON.stringify(query,2,null))
     let users = await adminUser.aggregate(query);
     //  users = await responseCostBrand(users);
@@ -573,20 +569,20 @@ export const getuserDetails = async (req, res, next) => {
     //   if (e.profile_image) {
     //     e.profile_image = process.env.AWS_S3_BASE_URL + e.profile_image;
     //   }
-  
+
     //   if (e.thumbnail_image) {
     //     e.thumbnail_image = process.env.AWS_S3_BASE_URL + e.thumbnail_image;
     //   }
-  
+
     //   if (e.cover_image) {
     //     e.cover_image = process.env.AWS_S3_BASE_URL + e.cover_image;
     //   }
-  
+
     //   e.tags = e?.costs?.tag || e?.brands?.tag;
     //   delete e?.brands?.tag;
     //   delete e?.costs?.tag;
     // }
-  
+
     // return users;
 
     // users = await User.populate(usersdata,{path:"followers"})
@@ -597,21 +593,21 @@ export const getuserDetails = async (req, res, next) => {
       if (e.profile_image) {
         e.profile_image = process.env.AWS_S3_BASE_URL + e.profile_image;
       }
-  
+
       if (e.thumbnail_image) {
         e.thumbnail_image = process.env.AWS_S3_BASE_URL + e.thumbnail_image;
       }
-  
+
       if (e.cover_image) {
         e.cover_image = process.env.AWS_S3_BASE_URL + e.cover_image;
       }
-  
+
       e.tags = e?.costs?.tag || e?.brands?.tag;
       delete e?.brands?.tag;
       delete e?.costs?.tag;
       // return users
     }
-  
+
     // return users;
     return res.status(200).json({
       success: true,
@@ -645,265 +641,313 @@ export const admingetuserDetails = async (req, res, next) => {
 
     //pagination
     let currpage, itempage;
-    const itemperpage = req.query.itemperpage ||10
+    const itemperpage = req.query.itemperpage || 10;
     const currentpageno = req.query.currentpageno || 1;
 
-    if(Object.entries(req.query).length > 0){
-    const andQuery = [];
-    const faceQuery = [];
-    if (req.query.isfacebook) {
-      andQuery.push({
-        is_facebook: facebook,
-      });
-    }
-
-    if (req.query.isInstagram) {
-      andQuery.push({
-        is_instagram: instagram,
-      });
-    }
-
-    if (phone) {
-      faceQuery.push({
-        phone: { $regex: "^\\+" + phone, $options: "i" },
-      });
-    }
-
-    if (searchdata) {
-      faceQuery.push({
-        first_name: { $regex: "^" + searchdata, $options: "i" },
-      });
-      faceQuery.push({
-        last_name: { $regex: "^" + searchdata, $options: "i" },
-      });
-    }
-
-
-    if (facebookname) {
-      faceQuery.push({
-        "facebook_info.name": { $regex: "^" + facebookname, $options: "i" },
-      });
-    }
-
-    if (instagramname) {
-      faceQuery.push({
-        "instagram_info.name": { $regex: "^" + instagramname, $options: "i" },
-      });
-    }
-
-    if (id) {
-      andQuery.push({
-        _id: mongoose.Types.ObjectId(id),
-      });
-    }
-    if (verify) {
-      andQuery.push({
-        status: verify,
-      });
-    }
-    if (type) {
-      andQuery.push({
-        type_of_user: type,
-      });
-    }
-    if (req.query.isadmin) {
-      andQuery.push({
-        is_admin: admin,
-      });
-    }
-
-    if (transactionType) {
-      andQuery.push({
-        "costs.transaction_type": transactionType,
-      });
-    }
-
-    if (tag) {
-      faceQuery.push({
-        "costs.tag.name": {
-          $regex: "^" + tag,
-          $options: "i",
-        },
-      });
-
-      faceQuery.push({
-        "brands.tag.name": {
-          $regex: "^" + tag,
-          $options: "i",
-        },
-      });
-    }
-
-    if (business_name) {
-      faceQuery.push({
-        "brands.business_name": { $regex: "^" + business_name, $options: "i" },
-      });
-    }
-
-    if (currentpageno && itemperpage) {
-      currpage = itemperpage * currentpageno - itemperpage;
-    }
-
-    if (currentpageno && itemperpage) {
-      itempage = parseInt(itemperpage);
-    }
-
-    let arrData;
-    if (faceQuery.length > 0 && andQuery.length > 0) {
-      arrData = {
-        $and: andQuery,
-        $or: faceQuery,
-      };
-    } else if (andQuery.length > 0) {
-      arrData = {
-        $and: andQuery,
-      };
-    } else if (faceQuery.length > 0) {
-      arrData = {
-        $or: faceQuery,
-      };
-    } else {
-      arrData = {};
-    }
-
-    // let arrData;
-    // if (andQuery.length > 0) {
-    //   arrData = {
-    //     $and: andQuery,
-    //   };
-    // }else {
-    //   arrData = {};
-    // }
-
-    // let arr;
-    // if (costQuery.length > 0) {
-    //   arr = {
-    //     $and: costQuery,
-    //   };
-    // } else {
-    //   arr = {};
-    // }
-
-    query = [
-      {
-        $lookup: {
-          from: "costs",
-          localField: "_id",
-          foreignField: "user_id",
-          as: "costs",
-        },
-      },
-      {
-        $unwind: {
-          path: "$costs",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $lookup: {
-          from: "brandinfos",
-          localField: "_id",
-          foreignField: "user_id",
-          as: "brands",
-        },
-      },
-      {
-        $unwind: {
-          path: "$brands",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $match: arrData,
-      },
-      // {
-      //   $match: arr,
-      // },
-      {
-        $project: {
-          followers: 0,
-          following: 0,
-          token: 0,
-        },
-      },
-      // {
-      //   $count:'phone'
-      // },
-      // {
-      //   $skip: currpage,
-      // },
-      // {
-      //   $limit: itempage,
-      // },
-      { 
-        $sort : { createdAt : -1 }
+    if (Object.entries(req.query).length > 0) {
+      const andQuery = [];
+      const faceQuery = [];
+      if (req.query.isfacebook) {
+        andQuery.push({
+          is_facebook: facebook,
+        });
       }
-    ];
-    // console.log("query",JSON.stringify(query,2,null))
-    query.push({
-      $match: {},
-    });
 
-    let total_records = await adminUser.aggregate(query)
+      if (req.query.isInstagram) {
+        andQuery.push({
+          is_instagram: instagram,
+        });
+      }
 
-    console.log("total_records",total_records.length);
+      if (phone) {
+        faceQuery.push({
+          phone: { $regex: "^\\+" + phone, $options: "i" },
+        });
+      }
 
-    let aggregateArrayWithPagination = query.concat([
-      { $skip: currpage },
-      { $limit: itempage },
-    ]);
+      if (searchdata) {
+        faceQuery.push({
+          first_name: { $regex: "^" + searchdata, $options: "i" },
+        });
+        faceQuery.push({
+          last_name: { $regex: "^" + searchdata, $options: "i" },
+        });
+      }
+
+      if (facebookname) {
+        faceQuery.push({
+          "facebook_info.name": { $regex: "^" + facebookname, $options: "i" },
+        });
+      }
+
+      if (instagramname) {
+        faceQuery.push({
+          "instagram_info.name": { $regex: "^" + instagramname, $options: "i" },
+        });
+      }
+
+      if (id) {
+        andQuery.push({
+          _id: mongoose.Types.ObjectId(id),
+        });
+      }
+      if (verify) {
+        andQuery.push({
+          status: verify,
+        });
+      }
+      if (type) {
+        andQuery.push({
+          type_of_user: type,
+        });
+      }
+      if (req.query.isadmin) {
+        andQuery.push({
+          is_admin: admin,
+        });
+      }
+
+      if (transactionType) {
+        andQuery.push({
+          "costs.transaction_type": transactionType,
+        });
+      }
+
+      if (tag) {
+        faceQuery.push({
+          "costs.tag.name": {
+            $regex: "^" + tag,
+            $options: "i",
+          },
+        });
+
+        faceQuery.push({
+          "brands.tag.name": {
+            $regex: "^" + tag,
+            $options: "i",
+          },
+        });
+      }
+
+      if (business_name) {
+        faceQuery.push({
+          "brands.business_name": {
+            $regex: "^" + business_name,
+            $options: "i",
+          },
+        });
+      }
+
+      if (currentpageno && itemperpage) {
+        currpage = itemperpage * currentpageno - itemperpage;
+      }
+
+      if (currentpageno && itemperpage) {
+        itempage = parseInt(itemperpage);
+      }
+
+      let arrData;
+      if (faceQuery.length > 0 && andQuery.length > 0) {
+        arrData = {
+          $and: andQuery,
+          $or: faceQuery,
+        };
+      } else if (andQuery.length > 0) {
+        arrData = {
+          $and: andQuery,
+        };
+      } else if (faceQuery.length > 0) {
+        arrData = {
+          $or: faceQuery,
+        };
+      } else {
+        arrData = {};
+      }
+
+      // let arrData;
+      // if (andQuery.length > 0) {
+      //   arrData = {
+      //     $and: andQuery,
+      //   };
+      // }else {
+      //   arrData = {};
+      // }
+
+      // let arr;
+      // if (costQuery.length > 0) {
+      //   arr = {
+      //     $and: costQuery,
+      //   };
+      // } else {
+      //   arr = {};
+      // }
+
+      query = [
+        {
+          $lookup: {
+            from: "costs",
+            localField: "_id",
+            foreignField: "user_id",
+            as: "costs",
+          },
+        },
+        {
+          $unwind: {
+            path: "$costs",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "brandinfos",
+            localField: "_id",
+            foreignField: "user_id",
+            as: "brands",
+          },
+        },
+        {
+          $unwind: {
+            path: "$brands",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $match: arrData,
+        },
+        // {
+        //   $match: arr,
+        // },
+        {
+          $project: {
+            followers: 0,
+            following: 0,
+            token: 0,
+          },
+        },
+        // {
+        //   $count:'phone'
+        // },
+        // {
+        //   $skip: currpage,
+        // },
+        // {
+        //   $limit: itempage,
+        // },
+        {
+          $sort: { createdAt: -1 },
+        },
+      ];
+      // console.log("query",JSON.stringify(query,2,null))
+      query.push({
+        $match: {},
+      });
+
+      console.log("type_of-ser",type)
+      
+      let total_records = await adminUser.aggregate(query);
+
+      let approvedCount =0,pendingCount=0,suspendCount=0,brandCount=0
+      let approvedCountInf =0,pendingCountInf=0,suspendCountInf=0,infCount=0
+      total_records.map((e)=>{
+         
+         if(e.type_of_user==="brand"){
+          brandCount=brandCount+1
+          if(e.status == "approved"){
+            approvedCount =approvedCount+1
+            // console.log(e.status.length)
+          }else if(e.status == "pending" ){
+            pendingCount=pendingCount+1
+          }else if(e.status == "suspended" ){
+            suspendCount=suspendCount+1
+          }
+         }else if(e.type_of_user === "influencer"){
+          infCount=infCount+1
+          if(e.status == "approved" ){
+            approvedCountInf =approvedCountInf+1
+            // console.log(e.status.length)
+          }else if(e.status == "pending"){
+            pendingCountInf=pendingCountInf+1
+          }else if(e.status == "suspended"){
+            suspendCountInf=suspendCountInf+1
+          }
+         }
+       
+      })
+      console.log("approvedCount",approvedCountInf)
+      console.log("pendingCount",pendingCountInf)
+      console.log("suspendCount",suspendCountInf)
+
+      console.log("brandCount",brandCount)
+      console.log("infCount",infCount)
 
     
-    let users = await adminUser.aggregate(aggregateArrayWithPagination);
-    //  data =await User.populate(users,{path:"following",select: { 'followers': 0,'following':0}})
-    //  data= await User.populate(users,{path:"followers",select: { 'followers': 0,'following':0}})
+    
 
-    // for (let element of data) {
-    //   // console.log("element11111",element?.following)
-    //    arr_following=element?.following
+      console.log("total_records", total_records.length);
 
-    //    if(arr_following != undefined){
-    //     var user_following
-    //     var users_arr =[]
-    //     for(let e of arr_following){
-    //       // console.log("ff",e._id)
-    //       user_following = await connectDetails({_id:mongoose.Types.ObjectId(e._id)})
-    //       //  if(e._id)
-    //       users_arr.push(user_following[0])
-    //      }
-    //      element.following =users_arr
-    //    }
+      let aggregateArrayWithPagination = query.concat([
+        { $skip: currpage },
+        { $limit: itempage },
+      ]);
 
-    //    arr_followers= element?.followers
-    //    if(arr_followers != undefined){
-    //     var user_followers
-    //     var user_arr =[]
-    //     for(let e of arr_followers){
-    //       // console.log("ff",e._id)
-    //       user_followers = await connectDetails({_id:mongoose.Types.ObjectId(e._id)})
-    //       //  if(e._id)
-    //       user_arr.push(user_followers[0])
-    //      }
-    //      element.followers =user_arr
-    //    }
-    // }
+      let users = await adminUser.aggregate(aggregateArrayWithPagination);
+      //  data =await User.populate(users,{path:"following",select: { 'followers': 0,'following':0}})
+      //  data= await User.populate(users,{path:"followers",select: { 'followers': 0,'following':0}})
 
-    // users = await User.populate(usersdata,{path:"followers"})
-    //  let  users = await User.populate(users1,{path:"followers"})
+      // for (let element of data) {
+      //   // console.log("element11111",element?.following)
+      //    arr_following=element?.following
 
-    users = await responseCostBrand(users);
+      //    if(arr_following != undefined){
+      //     var user_following
+      //     var users_arr =[]
+      //     for(let e of arr_following){
+      //       // console.log("ff",e._id)
+      //       user_following = await connectDetails({_id:mongoose.Types.ObjectId(e._id)})
+      //       //  if(e._id)
+      //       users_arr.push(user_following[0])
+      //      }
+      //      element.following =users_arr
+      //    }
 
-    return res.status(200).json({
-      success: true,
-      user: users,
-      total_records:total_records.length
-    });
-  }else{
-    return res.status(200).json({
-      success: true,
-      message: "Invalid request ",
-    });
-  }
+      //    arr_followers= element?.followers
+      //    if(arr_followers != undefined){
+      //     var user_followers
+      //     var user_arr =[]
+      //     for(let e of arr_followers){
+      //       // console.log("ff",e._id)
+      //       user_followers = await connectDetails({_id:mongoose.Types.ObjectId(e._id)})
+      //       //  if(e._id)
+      //       user_arr.push(user_followers[0])
+      //      }
+      //      element.followers =user_arr
+      //    }
+      // }
+
+      // users = await User.populate(usersdata,{path:"followers"})
+      //  let  users = await User.populate(users1,{path:"followers"})
+
+      users = await responseCostBrand(users);
+
+      return res.status(200).json({
+        success: true,
+        user: users,
+        total_records: total_records.length,
+        "brandApprovedCount":approvedCount,
+        "brandPendingCount":pendingCount,
+        "brandSuspendCount":suspendCount,
+        "infuencerApprovedCount":approvedCountInf,
+        "infuencerPendingCount":pendingCountInf,
+        "infuencerSuspendCount":suspendCountInf,
+        'brandCount':brandCount,
+        "infuencerCount":infCount
+      });
+    } else {
+      return res.status(200).json({
+        success: true,
+        message: "Invalid request ",
+      });
+    }
   } catch (error) {
     console.log("error", error);
     return res.status(500).json(errors.SERVER_ERROR);
@@ -921,14 +965,11 @@ export const getuser = async (req, res, next) => {
       search,
       type
     );
-  
-      return res.status(201).json({
-        success: true,
-        user: users[0],
-        
-      });
-      
-    
+
+    return res.status(201).json({
+      success: true,
+      user: users[0],
+    });
   } catch (error) {
     console.log("error", error);
     return res.status(500).json(errors.SERVER_ERROR);
@@ -1020,8 +1061,6 @@ export const getuser = async (req, res, next) => {
 //     return res.status(500).json(errors.SERVER_ERROR);
 //   }
 // };
-
-
 
 // admin update user details
 // exports.adminUpdateUserDetails = async (req, res, next) => {
@@ -1210,8 +1249,6 @@ export const getuser = async (req, res, next) => {
 //   }
 // };
 
-
-
 // const uploadFile = (data, name) => {
 //   return new Promise((resolve, reject) => {
 //     try {
@@ -1245,8 +1282,6 @@ export const getuser = async (req, res, next) => {
 //     }
 //   });
 // };
-
-
 
 // exports.adminProfileCoverimage = async (req, res, next) => {
 //   try {
@@ -1302,4 +1337,3 @@ export const getuser = async (req, res, next) => {
 //     return res.status(500).json(errors.SERVER_ERROR);
 //   }
 // };
-
