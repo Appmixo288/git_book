@@ -65,7 +65,7 @@ app.get("/api/auth/callback", (req, res) => {
       return res.redirect("/fail");
     }
     if (user) {
-      // res.cookie("userData", user.id);
+      res.cookie("userData", user.id);
       res.redirect("/profile");
       return res;
     }

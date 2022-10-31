@@ -4,8 +4,29 @@ import PersistentDrawer from "../components/persistentDrawer";
 import { getBrandApi, getCountApi } from "../API/api";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Button from "@mui/material/Button";
+import Avatar from "@mui/material/Avatar";
+
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import CardMedia from "@mui/material/CardMedia";
 
 const Profile = () => {
+  const [open, setOpen] = React.useState(false);
+  const [img, setImg] = React.useState("");
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const [arr, setarr] = useState([]);
   const [pageState, setPageState] = useState({
     isLoading: false,
@@ -93,6 +114,26 @@ const Profile = () => {
           //   minWidth: 80,
           //   flex: 1,
           // },
+
+          {
+            field: "image",
+            headerName: "Image",
+            minWidth: 70,
+            width: 70,
+            renderCell: (params) => (
+              <Avatar
+                alt="Kristagram"
+                src="https://cdn.pixabay.com/photo/2018/02/09/21/46/rose-3142529__340.jpg"
+                onClick={() => {
+                  // console.log(')))',params.value)
+                  setImg(
+                    "https://cdn.pixabay.com/photo/2018/02/09/21/46/rose-3142529__340.jpg"
+                  );
+                  handleClickOpen();
+                }}
+              />
+            ),
+          },
           {
             field: "phone",
             headerName: "Phone",
@@ -145,9 +186,39 @@ const Profile = () => {
             width: 200,
             flex: 1,
           },
+          {
+            field: "action",
+            headerName: "Action",
+
+            minWidth: 70,
+            width: 70,
+
+            renderCell: (params) => {
+              return <Button startIcon={<DeleteIcon />}></Button>;
+            },
+          },
           // { field: "brand_updatedAt", headerName: "brand updatedAt", width: 90 },
         ]
       : [
+          {
+            field: "image",
+            headerName: "Image",
+            minWidth: 70,
+            width: 70,
+            renderCell: (params) => (
+              <Avatar
+                alt="Kristagram"
+                src="https://cdn.pixabay.com/photo/2018/02/09/21/46/rose-3142529__340.jpg"
+                onClick={() => {
+                  // console.log(')))',params.value)
+                  setImg(
+                    "https://cdn.pixabay.com/photo/2018/02/09/21/46/rose-3142529__340.jpg"
+                  );
+                  handleClickOpen();
+                }}
+              />
+            ),
+          },
           {
             field: "phone",
             headerName: "Phone",
@@ -184,6 +255,18 @@ const Profile = () => {
             width: 210,
             flex: 1,
           },
+          {
+            field: "action",
+            headerName: "Action",
+
+            minWidth: 70,
+            width: 70,
+
+            renderCell: (params) => {
+              return <Button startIcon={<DeleteIcon />}></Button>;
+            },
+          },
+
           // { field: "brand_createdAt", headerName: "brand createdAt", width: 90 },
 
           // {
@@ -202,15 +285,29 @@ const Profile = () => {
           // },
         ];
   const rows = [];
-
+  const formatDate = (dateString) => {
+    const options =
+      ("en-US",
+      {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        hour12: true,
+        minute: "2-digit",
+        second: "2-digit",
+      });
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
   arr.map((item, i) => {
     return rows.push({
+      image: item?.profile_image,
       id: i + 1,
       phone: item?.phone,
-      createdAt: item?.createdAt,
+      createdAt: formatDate(item?.createdAt),
       status: item?.status,
       type_of_user: item?.type_of_user,
-      updatedAt: item?.updatedAt,
+      updatedAt: formatDate(item?.updatedAt),
       brand_createdAt: item?.brands?.createdAt,
       brand_type_of_brand: item?.brands?.type_of_brand,
       brand_user_id: item?.brands?.user_id,
@@ -252,7 +349,7 @@ const Profile = () => {
         <TabList>
           <Tab
             onClick={() => {
-              countData()
+              countData();
               getBrandAllData("brand", "approved");
               setMainTabVal(0);
               tabVal == 0
@@ -268,7 +365,7 @@ const Profile = () => {
           </Tab>
           <Tab
             onClick={() => {
-              countData()
+              countData();
               getBrandAllData("influencer", "approved");
               setMainTabVal(1);
               tabValIns == 0
@@ -288,7 +385,7 @@ const Profile = () => {
             <TabList>
               <Tab
                 onClick={() => {
-                  countData()
+                  countData();
                   setTabVal(0);
                   getBrandAllData("brand", "approved");
                 }}
@@ -297,7 +394,7 @@ const Profile = () => {
               </Tab>
               <Tab
                 onClick={() => {
-                  countData()
+                  countData();
                   setTabVal(1);
                   getBrandAllData("brand", "pending");
                 }}
@@ -307,7 +404,7 @@ const Profile = () => {
 
               <Tab
                 onClick={() => {
-                  countData()
+                  countData();
                   setTabVal(2);
                   getBrandAllData("brand", "suspended");
                 }}
@@ -316,7 +413,7 @@ const Profile = () => {
               </Tab>
               <Tab
                 onClick={() => {
-                  countData()
+                  countData();
                   setTabVal(3);
                   getBrandAllData("brand");
                 }}
@@ -335,7 +432,7 @@ const Profile = () => {
             <TabList>
               <Tab
                 onClick={() => {
-                  countData()
+                  countData();
                   setTabValIns(0);
                   getBrandAllData("influencer", "approved");
                 }}
@@ -344,7 +441,7 @@ const Profile = () => {
               </Tab>
               <Tab
                 onClick={() => {
-                  countData()
+                  countData();
                   setTabValIns(1);
                   getBrandAllData("influencer", "pending");
                 }}
@@ -354,7 +451,7 @@ const Profile = () => {
 
               <Tab
                 onClick={() => {
-                  countData()
+                  countData();
                   setTabValIns(2);
                   getBrandAllData("influencer", "suspended");
                 }}
@@ -363,7 +460,7 @@ const Profile = () => {
               </Tab>
               <Tab
                 onClick={() => {
-                  countData()
+                  countData();
                   setTabValIns(3);
                   getBrandAllData("influencer");
                 }}
@@ -378,6 +475,14 @@ const Profile = () => {
           </Tabs>
         </TabPanel>
       </Tabs>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <CardMedia component="img" height="200" image={img} alt="Kristagram" />
+      </Dialog>
     </div>
   );
 };
