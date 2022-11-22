@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import PersistentDrawer from "../components/persistentDrawer";
-import { getBrandApi, getCountApi } from "../API/api";
+import { getBrandApi, getCountApi, deleteUser } from "../API/api";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
-
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import CardMedia from "@mui/material/CardMedia";
+import Stack from "@mui/material/Stack";
 
 const Profile = () => {
   const [open, setOpen] = React.useState(false);
@@ -32,8 +28,9 @@ const Profile = () => {
     isLoading: false,
     total: 0,
     page: 1,
-    pageSize: 10,
+    pageSize: 5,
   });
+
   const [tabVal, setTabVal] = useState(0);
   const [tabValIns, setTabValIns] = useState(0);
   const [mainTabVal, setMainTabVal] = useState(0);
@@ -51,20 +48,20 @@ const Profile = () => {
 
   useEffect(() => {
     countData();
-    if (mainTabVal == 0) {
-      tabVal == 0 && mainTabVal == 0
+    if (mainTabVal === 0) {
+      tabVal === 0 && mainTabVal === 0
         ? getBrandAllData("brand", "approved")
-        : tabVal == 1
+        : tabVal === 1
         ? getBrandAllData("brand", "pending")
-        : tabVal == 2
+        : tabVal === 2
         ? getBrandAllData("brand", "suspended")
         : getBrandAllData("brand");
-    } else if (mainTabVal == 1) {
-      tabValIns == 0 && mainTabVal == 1
+    } else if (mainTabVal === 1) {
+      tabValIns === 0 && mainTabVal === 1
         ? getBrandAllData("influencer", "approved")
-        : tabValIns == 1
+        : tabValIns === 1
         ? getBrandAllData("influencer", "pending")
-        : tabValIns == 2
+        : tabValIns === 2
         ? getBrandAllData("influencer", "suspended")
         : getBrandAllData("influencer");
     }
@@ -91,7 +88,7 @@ const Profile = () => {
 
   const countData = async () => {
     const res = await getCountApi();
-    console.log("1232434", res.data);
+
     setTotalVal({
       allBrand: res.data.brandCount,
       approvedBrand: res.data.brandApprovedCount,
@@ -104,193 +101,191 @@ const Profile = () => {
     });
   };
 
-  const columns =
-    arr[0]?.type_of_user == "brand"
-      ? [
-          // {
-          //   field: "id",
-          //   headerName: "id",
-          //   width: "100px",
-          //   minWidth: 80,
-          //   flex: 1,
-          // },
+  const deleteData = async (id, status, type_of_user) => {
+    console.log("id...", id, status, type_of_user);
+    await deleteUser(id, status, type_of_user);
+  };
 
-          {
-            field: "image",
-            headerName: "Image",
-            minWidth: 70,
-            width: 70,
-            renderCell: (params) => (
+  const columns = [
+    {
+      field: "image",
+      headerName: "Image",
+      minWidth: 100,
+      width: 100,
+      renderCell: (params) => {
+        return (
+          <Stack>
+            <span>
               <Avatar
+                sx={{
+                  height: "50px",
+                  width: "50px",
+                }}
                 alt="Kristagram"
                 src="https://cdn.pixabay.com/photo/2018/02/09/21/46/rose-3142529__340.jpg"
+                // src={process.env.CDN_BASE_URL+'image'}
                 onClick={() => {
-                  // console.log(')))',params.value)
                   setImg(
                     "https://cdn.pixabay.com/photo/2018/02/09/21/46/rose-3142529__340.jpg"
                   );
                   handleClickOpen();
                 }}
               />
-            ),
-          },
-          {
-            field: "phone",
-            headerName: "Phone",
-            minWidth: 130,
-            width: 130,
-            flex: 1,
-          },
+            </span>
+          </Stack>
+        );
+      },
+    },
+    {
+      field: "phone",
+      headerName: "User Information",
+      minWidth: 200,
+      width: 200,
+      flex: 1,
+      renderCell: (params) => {
+        return (
+          console.log(params),
+          (
+            <Stack>
+              <span>
+                <b>Name : </b>
+                {params.row.values.brand_type_of_brand === "offline"
+                  ? params.row.values.business_name
+                    ? params.row.values.business_name
+                    : "Kristagran User"
+                  : params.row.values.brand_type_of_brand === "online"
+                  ? `${
+                      params.row.values.first_name
+                        ? params.row.values.first_name
+                        : "Kristagran User"
+                    }${" "}${
+                      params.row.values.last_name
+                        ? params.row.values.last_name
+                        : " "
+                    }`
+                  : `${
+                      params.row.values.first_name
+                        ? params.row.values.first_name
+                        : "Kristagran User"
+                    }${" "}${
+                      params.row.values.last_name
+                        ? params.row.values.last_name
+                        : " "
+                    }`}
+              </span>
+              <span>
+                <b>Phone :</b> {params.row.values.phone}
+              </span>
+            </Stack>
+          )
+        );
+      },
+    },
+    {
+      field: "brand_type_of_brand",
+      headerName: "Type",
+      minWidth: 100,
+      width: 100,
+      flex: 1,
+      renderCell: (params) => {
+        return (
+          console.log("???", params.row.values.cost),
+          (
+            <Stack>
+              <span>
+                {params.row.values.type_of_user === "brand"
+                  ? params.row.values.brand_type_of_brand
+                    ? params.row.values.brand_type_of_brand
+                    : " - "
+                  : params.row.values.inf_type === "price"
+                  ? params.row.values.cost
+                  : params.row.values.inf_type === "barter"
+                  ? params.row.values.inf_type
+                  : " - "}
+              </span>
+            </Stack>
+          )
+        );
+      },
+    },
+    {
+      field: "createdAt",
+      headerName: "CreatedAt",
+      width: 150,
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params) => {
+        return (
+          console.log(params),
+          (
+            <Stack>
+              <span>
+                {params.row.values.createdAt.split(",")[0]}
+                {", "}
+                {params.row.values.createdAt.split(",")[1]}
+                <br /> {params.row.values.createdAt.split(",")[2]}
+              </span>
+            </Stack>
+          )
+        );
+      },
+    },
 
-          {
-            field: "createdAt",
-            headerName: "CreatedAt",
-            width: 210,
-            flex: 1,
-            minWidth: 210,
-          },
-          // {
-          //   field: "status",
-          //   headerName: "status",
-          //   width: "100px",
-          //   minWidth: 80,
-          //   flex: 1,
-          // },
-          // {
-          //   field: "type_of_user",
-          //   headerName: "type_of_user",
-          //   width: "100px",
-          //   minWidth: 80,
-          //   flex: 1,
-          // },
-          {
-            field: "updatedAt",
-            headerName: "UpdatedAt",
-            minWidth: 210,
-            width: 210,
-            flex: 1,
-          },
-          // { field: "brand_createdAt", headerName: "brand createdAt", width: 90 },
+    {
+      field: "updatedAt",
+      headerName: "UpdatedAt",
+      minWidth: 150,
+      width: 150,
+      flex: 1,
+      renderCell: (params) => {
+        return (
+          console.log(params),
+          (
+            <Stack>
+              <span>
+                {params.row.values.updatedAt.split(",")[0]}
+                {", "}
+                {params.row.values.updatedAt.split(",")[1]}
+                <br /> {params.row.values.updatedAt.split(",")[2]}
+              </span>
+            </Stack>
+          )
+        );
+      },
+    },
 
-          {
-            field: "brand_type_of_brand",
-            headerName: "Type of brand",
-            minWidth: 150,
-            width: 150,
-            flex: 1,
-          },
-          {
-            field: "brand_user_id",
-            headerName: "User id",
-            minWidth: 200,
-            width: 200,
-            flex: 1,
-          },
-          {
-            field: "action",
-            headerName: "Action",
+    {
+      field: "action",
+      headerName: "Action",
+      minWidth: 70,
+      width: 70,
+      flex: 1,
+      renderCell: (params) => {
+        return (
+          <Button
+            startIcon={<DeleteIcon style={{ color: "gray", fontSize: 30 }} />}
+            onClick={() => {
+              console.log("clicked", params.row);
+              deleteData(
+                params.row.id,
+                params.row.status,
+                params.row.type_of_user
+              );
+            }}
+          ></Button>
+        );
+      },
+    },
+  ];
 
-            minWidth: 70,
-            width: 70,
-
-            renderCell: (params) => {
-              return <Button startIcon={<DeleteIcon />}></Button>;
-            },
-          },
-          // { field: "brand_updatedAt", headerName: "brand updatedAt", width: 90 },
-        ]
-      : [
-          {
-            field: "image",
-            headerName: "Image",
-            minWidth: 70,
-            width: 70,
-            renderCell: (params) => (
-              <Avatar
-                alt="Kristagram"
-                src="https://cdn.pixabay.com/photo/2018/02/09/21/46/rose-3142529__340.jpg"
-                onClick={() => {
-                  // console.log(')))',params.value)
-                  setImg(
-                    "https://cdn.pixabay.com/photo/2018/02/09/21/46/rose-3142529__340.jpg"
-                  );
-                  handleClickOpen();
-                }}
-              />
-            ),
-          },
-          {
-            field: "phone",
-            headerName: "Phone",
-            minWidth: 130,
-            width: 130,
-            flex: 1,
-          },
-
-          {
-            field: "createdAt",
-            headerName: "CreatedAt",
-            width: 210,
-            flex: 1,
-            minWidth: 210,
-          },
-          // {
-          //   field: "status",
-          //   headerName: "status",
-          //   width: "100px",
-          //   minWidth: 80,
-          //   flex: 1,
-          // },
-          // {
-          //   field: "type_of_user",
-          //   headerName: "type_of_user",
-          //   width: "100px",
-          //   minWidth: 80,
-          //   flex: 1,
-          // },
-          {
-            field: "updatedAt",
-            headerName: "UpdatedAt",
-            minWidth: 210,
-            width: 210,
-            flex: 1,
-          },
-          {
-            field: "action",
-            headerName: "Action",
-
-            minWidth: 70,
-            width: 70,
-
-            renderCell: (params) => {
-              return <Button startIcon={<DeleteIcon />}></Button>;
-            },
-          },
-
-          // { field: "brand_createdAt", headerName: "brand createdAt", width: 90 },
-
-          // {
-          //   field: "brand_type_of_brand",
-          //   headerName: "Type of brand",
-          //   minWidth: 150,
-          //   width: 150,
-          //   flex: 1,
-          // },
-          // {
-          //   field: "brand_user_id",
-          //   headerName: "User id",
-          //   minWidth: 200,
-          //   width: 200,
-          //   flex: 1,
-          // },
-        ];
+  console.log("arr", arr);
   const rows = [];
   const formatDate = (dateString) => {
     const options =
       ("en-US",
       {
         year: "numeric",
-        month: "long",
+        month: "short",
         day: "numeric",
         hour: "2-digit",
         hour12: true,
@@ -303,26 +298,30 @@ const Profile = () => {
     return rows.push({
       image: item?.profile_image,
       id: i + 1,
-      phone: item?.phone,
-      createdAt: formatDate(item?.createdAt),
-      status: item?.status,
-      type_of_user: item?.type_of_user,
-      updatedAt: formatDate(item?.updatedAt),
-      brand_createdAt: item?.brands?.createdAt,
-      brand_type_of_brand: item?.brands?.type_of_brand,
-      brand_user_id: item?.brands?.user_id,
-      brand_updatedAt: item?.brands?.updatedAt,
+      values: {
+        phone: item?.phone,
+        createdAt: formatDate(item?.createdAt),
+        updatedAt: formatDate(item?.updatedAt),
+        brand_type_of_brand: item?.brands?.type_of_brand,
+        inf_type: item?.costs?.transaction_type,
+        business_name: item?.brands?.business_name,
+        cost: item?.costs?.cost,
+        type_of_user: item?.type_of_user,
+        first_name: item?.first_name,
+        last_name: item?.last_name,
+      },
     });
   });
 
   const data =
-    arr.length == 0 ? (
+    arr.length === 0 ? (
       <div>
         <h1 style={{ textAlign: "center" }}>No Data Found</h1>
       </div>
     ) : (
       <Box sx={{ height: 630, width: "100%" }}>
         <DataGrid
+          rowHeight={100}
           rows={rows}
           columns={columns}
           rowCount={pageState.total}
@@ -352,11 +351,11 @@ const Profile = () => {
               countData();
               getBrandAllData("brand", "approved");
               setMainTabVal(0);
-              tabVal == 0
+              tabVal === 0
                 ? getBrandAllData("brand", "approved")
-                : tabVal == 1
+                : tabVal === 1
                 ? getBrandAllData("brand", "pending")
-                : tabVal == 2
+                : tabVal === 2
                 ? getBrandAllData("brand", "suspended")
                 : getBrandAllData("brand");
             }}
@@ -368,11 +367,11 @@ const Profile = () => {
               countData();
               getBrandAllData("influencer", "approved");
               setMainTabVal(1);
-              tabValIns == 0
+              tabValIns === 0
                 ? getBrandAllData("influencer", "approved")
-                : tabValIns == 1
+                : tabValIns === 1
                 ? getBrandAllData("influencer", "pending")
-                : tabValIns == 2
+                : tabValIns === 2
                 ? getBrandAllData("influencer", "suspended")
                 : getBrandAllData("influencer");
             }}
@@ -448,7 +447,6 @@ const Profile = () => {
               >
                 Pending : {totalVal.pendingInfluencer}
               </Tab>
-
               <Tab
                 onClick={() => {
                   countData();

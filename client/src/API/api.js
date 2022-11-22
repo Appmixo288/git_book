@@ -14,7 +14,6 @@ export const getBrandApi = async (
     } else {
       url = `/api/v1/all?itemperpage=${itemperpage}&type_of_user=${brand}&currentpageno=${currentpageno}`;
     }
-
     console.log("getBrandApproveApi", itemperpage, currentpageno);
     const res = await axios.get(url);
     console.log("****", res.data);
@@ -34,3 +33,16 @@ export const getCountApi = async () => {
     console.log("error while calling get user api", error);
   }
 };
+
+
+export const deleteUser = async (id) => {
+  console.log('**12',id);
+  try {
+  const res=await axios.delete(`/api/v1/all/${id}`);
+  console.log('res',res)
+  return  res;
+  } catch (error) {
+    console.log("error while calling delete user api", error);
+  }
+};
+
