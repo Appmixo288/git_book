@@ -47,6 +47,7 @@ const Profile = () => {
   });
 
   useEffect(() => {
+    
     countData();
     if (mainTabVal === 0) {
       tabVal === 0 && mainTabVal === 0
